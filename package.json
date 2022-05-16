@@ -1,0 +1,17 @@
+{
+  "name": "bank_diploma_checker",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js --count=1000 --delay=10 --raceMode=true --mode=interval"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "lodash": "^4.17.21",
+    "minimist": "^1.2.6"
+  }
+}

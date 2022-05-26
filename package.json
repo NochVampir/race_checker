@@ -3,15 +3,21 @@
   "version": "1.0.0",
   "description": "",
   "main": "main.js",
+  "type": "module",
   "scripts": {
-    "start": "node main.js --count=1000 --delay=10 --raceMode=true --mode=interval"
+    "startTest": "node ./src/testChecker.js",
+    "start": "node main.js --count=1000 --delay=1 --mode=interval"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "async": "^3.2.3",
     "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
     "lodash": "^4.17.21",
-    "minimist": "^1.2.6"
+    "minimist": "^1.2.6",
+    "terminal-image": "^2.0.0",
+    "winston": "^3.7.2"
   }
 }

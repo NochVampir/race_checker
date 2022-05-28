@@ -12,7 +12,10 @@ console.log(await terminalImage.file('src/welcome.jpg', {
 }));
 
 const testPipe = new PipesRunner()
-    .addPipe(new TopBalancePipe())
-    .addPipe(new SendTransactionPipe())
+    .addPipe(new SendTransactionPipe({numOfReqs: 20}))
+    .addPipe(new SendTransactionPipe({numOfReqs: 100}))
+    .addPipe(new SendTransactionPipe({numOfReqs: 50}))
+    .addPipe(new TopBalancePipe({numOfReqs: 20}))
 
-testPipe.runPipes()
+testPipe
+    .runPipes()

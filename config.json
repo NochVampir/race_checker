@@ -1,4 +1,6 @@
 {
-  "username": "test-1",
-  "password": "0000"
+  "auth": {
+    "nickname": "test-1",
+    "password": "0000"
+  }
 }

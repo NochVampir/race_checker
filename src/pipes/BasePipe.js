@@ -28,17 +28,14 @@ export class BasePipe {
 
     async setupAuth(){
         try{
-            const tokenResponse = await this.httpService.post("/account/login", {
-                nickname: config.username,
-                password: config.password,
-            })
+            const tokenResponse = await this.httpService.post("/account/login", config.auth);
 
-            if(!tokenResponse.data) throw Error
+            if(!tokenResponse.data) throw Error;
 
             this.httpService.defaults.headers.common["Authorization"] = `Bearer ${tokenResponse.data.token}`;
 
         }catch (e) {
-            this.setStatus(false);
+            this.rejectPipe();
         }
     }
 
@@ -49,12 +46,12 @@ export class BasePipe {
                     .keys()))
                 .map((_, index) => async () => {
                     try {
-                        await this.runOnRequest(index)
+                        await this.runOnRequest(index);
                     }catch (e) {
                         const codeMsg = e.code ?? '';
-                        const errMsg = `Request ${index} error${codeMsg ? `: ${codeMsg}` : ''}`
-                        this.logger.logError(errMsg)
-                        this.errors.push(errMsg)
+                        const errMsg = `Request ${index} error${codeMsg ? `: ${codeMsg}` : ''}`;
+                        this.logger.logError(errMsg);
+                        this.errors.push([index, errMsg]);
                     }
                 })
         )
@@ -69,13 +66,21 @@ export class BasePipe {
             }
 
             await this.runOnSetup();
-            await this.runParallelPipe();
+            switch (this.mode){
+                case "parallel":
+                    await this.runParallelPipe();
+                    break;
+                case "interval":
+                    await this.runIntervalPipe();
+                    break;
+            }
             await this.runOnResult();
 
         }catch (e) {
             if(e.code){
                 this.logger.logError(e.code);
             }
+            throw e;
         }
     }
 
@@ -88,17 +93,16 @@ export class BasePipe {
     }
 
     runOnRequest(ind){
-        this.logger.logInfo(`Request ${ind} is running!`)
-        return this.onRequest()
+        this.logger.logInfo(`Request ${ind} is running!`);
+        return this.onRequest();
     }
 
-    setStatus(isSuccess, msg = ''){
-        if(!isSuccess) {
-            this.logger.logError(msg);
-            return;
-        }
+    rejectPipe(){
+        this.logger.logError("PIPE IS REJECTED");
+    }
 
-        this.logger.logInfo(`Pipe ${this.strategyName} successfully completed!`);
+    successPipe(){
+        this.logger.logInfo("PIPE IS COMPLETE");
     }
 
     get pipeErrors(){

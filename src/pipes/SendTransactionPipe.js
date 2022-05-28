@@ -3,12 +3,13 @@ import {BasePipe} from "./BasePipe.js";
 export class SendTransactionPipe extends BasePipe {
     transactionsSum = 0;
 
-    constructor() {
+    constructor({
+        numOfReqs = 150
+                }) {
         super({
             strategyName: "ProvideTransaction",
             mode: "parallel",
-            numOfReqs: 150,
-            setupAuth: false,
+            numOfReqs
         });
     }
 
@@ -40,10 +41,9 @@ export class SendTransactionPipe extends BasePipe {
         const newValue = await this.getProfileAmount();
 
         if(this.checkData - this.transactionsSum !== newValue) {
-            this.setStatus(false);
-            return;
+            this.rejectPipe();
+        }else{
+            this.successPipe();
         }
-
-        this.setStatus(true);
     }
 }

@@ -3,11 +3,13 @@ import {BasePipe} from "./BasePipe.js";
 export class TopBalancePipe extends BasePipe {
     topSum = 0;
 
-    constructor() {
+    constructor({
+        numOfReqs = 20
+                }) {
         super({
             strategyName: "TopBalancePipe",
             mode: "parallel",
-            numOfReqs: 100,
+            numOfReqs,
         });
     }
 
@@ -28,19 +30,19 @@ export class TopBalancePipe extends BasePipe {
     onRequest() {
         const randomSum = Math.floor(Math.random() * 20);
         this.topSum += randomSum;
-        return this.httpService.put("/account/replenishment", {
+        return this.httpService.put("/account/replenish", {
             cost: randomSum
         })
     }
 
     async onResult() {
-        const newValue = await this.getProfileAmount();
+        const newValue = await this.getBalanceAmount();
 
         if(this.checkData + this.topSum !== newValue) {
-            this.setStatus(false);
+            this.rejectPipe();
             return;
         }
 
-        this.setStatus(true);
+        this.successPipe();
     }
 }
